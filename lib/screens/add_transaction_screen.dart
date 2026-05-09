@@ -10,9 +10,9 @@ class AddTransactionScreen extends StatefulWidget {
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController titleControler = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
 
-  final TextEditingController amounControlet = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           child: Column(
             children: [
               TextFormField(
-                controller: titleControler,
+                controller: titleController,
                 decoration: const InputDecoration(
                   labelText: "NamaTransaksi",
                   border: OutlineInputBorder(),
@@ -42,7 +42,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: amounControlet,
+                controller: amountController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: "Jumlah ",
@@ -57,7 +57,25 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(onPressed: () {}, child: const Text("Simpan")),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    String title = titleController.text;
+
+                    String amount = amountController.text;
+
+                    await Future.delayed(const Duration(seconds: 1));
+
+                    Navigator.pop(context, {
+                      "title": title,
+                      "type": "Pengeluaran",
+                      "amount": int.parse(amount),
+                    });
+                  }
+                },
+
+                child: const Text("Simpan"),
+              ),
             ],
           ),
         ),
