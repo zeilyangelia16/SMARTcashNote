@@ -53,8 +53,9 @@ lib/
 ├── models/
 │ └── transaction_model.dart
 ├── screens/
+| ├── home_screen.dart
 | ├── add_transaction_screen.dart 
-│ └── home_screen.dart
+│ └── statistic_screen.dart
 ├── widgets/
 │ └── transaction_item.dart
 ├── services/

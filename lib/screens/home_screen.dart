@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartcashnote/screens/add_transaction_screen.dart';
+import 'package:smartcashnote/screens/statistic_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -366,6 +367,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GestureDetector(
       onTap: () {
+        if (index == 2) {
+          Navigator.push(
+            context,
+
+            MaterialPageRoute(builder: (context) => const StatisticScreen()),
+          );
+        }
         setState(() {
           currentIndex = index;
         });
