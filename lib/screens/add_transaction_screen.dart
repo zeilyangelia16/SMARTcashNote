@@ -14,6 +14,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   final TextEditingController amountController = TextEditingController();
 
+  String selectedType = "Pengeluaran";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +58,33 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedType,
+
+                decoration: const InputDecoration(
+                  labelText: "Kategori",
+                  border: OutlineInputBorder(),
+                ),
+
+                items: const [
+                  DropdownMenuItem(
+                    value: "Pemasukan",
+                    child: Text("Pemasukan"),
+                  ),
+
+                  DropdownMenuItem(
+                    value: "Pengeluaran",
+                    child: Text("Pengeluaran"),
+                  ),
+                ],
+
+                onChanged: (value) {
+                  setState(() {
+                    selectedType = value!;
+                  });
+                },
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
@@ -68,7 +97,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                     Navigator.pop(context, {
                       "title": title,
-                      "type": "Pengeluaran",
+                      "type": selectedType,
                       "amount": int.parse(amount),
                     });
                   }

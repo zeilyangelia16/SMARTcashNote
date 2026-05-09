@@ -43,15 +43,47 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: ListView(
               children: transactions.map((item) {
-                return ListTile(
-                  title: Text(item["title"]),
+                return Dismissible(
+                  key: UniqueKey(),
 
-                  subtitle: Text(item["type"]),
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 20),
 
-                  trailing: Text(
-                    item["type"] == "Pemasukan"
-                        ? "+${item["amount"]}"
-                        : "-${item["amount"]}",
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+
+                  onDismissed: (direction) {
+                    setState(() {
+                      transactions.remove(item);
+                    });
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("${item["title"]} berhasil dihapus"),
+                      ),
+                    );
+                  },
+
+                  child: ListTile(
+                    title: Text(item["title"]),
+
+                    subtitle: Text(item["type"]),
+
+                    trailing: Text(
+                      item["type"] == "Pemasukan"
+                          ? "+${item["amount"]}"
+                          : "-${item["amount"]}",
+
+                      style: TextStyle(
+                        color: item["type"] == "Pemasukan"
+                            ? Colors.green
+                            : Colors.red,
+
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 );
               }).toList(),
