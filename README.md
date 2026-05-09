@@ -1,17 +1,64 @@
-# smartcashnote
+# Smart CashNote
 
-A new Flutter project.
+Smart CashNote adalah aplikasi mobile berbasis Flutter yang digunakan untuk mencatat dan mengelola keuangan harian. Aplikasi ini dirancang untuk membantu pengguna memantau pemasukan dan pengeluaran secara sederhana, cepat, dan efisien.
 
-## Getting Started
+## Tujuan Pengembangan
+- Membantu pengguna mencatat transaksi keuangan harian
+- Menyediakan informasi saldo secara real-time
+- Meningkatkan kesadaran pengguna terhadap pengeluaran
 
-This project is a starting point for a Flutter application.
+## Fitur Utama
+- Menambahkan transaksi pemasukan (income)
+- Menambahkan transaksi pengeluaran (expense)
+- Menampilkan daftar transaksi
+- Menghitung saldo otomatis
+- Menghapus transaksi
+- Ketegori transaksi
+## Fitur Pengembangan
+- Grafik keuangan
+- Filter transaksi berdasarkan tanggal
+- Mode gelap(Dark Mode)
+- Penyimpanan data lokal (SQLite/Hive)
 
-A few resources to get you started if this is your first Flutter project:
+## Alur Aplikasi
+1. Pengguna membuka aplikasi
+2. Sistem menampilkan Home Screen
+3. Pengguna melihat saldo dan daftar transaksi
+4. Pengguna menekan tombol (+)
+5. Pengguna mengisi form transaksi
+6. Sistem melakukan validasi input (TextFormField)
+7. Data disimpan menggunakan proses asynchronous (async/await)
+8. Aplikasi kembali ke Home Screen
+9. Data transaksi ditampilkan di daftar
+10. Pengguna dapat menghapus atau mengedit transaksi
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Struktur Halaman
+1. Home Screen
+    - Menampilkan saldo
+    - Menampilkan daftar transaksi
+    - Tombol tambah(+) transaksi
+2. Add Transaction Screen
+    - Form input(TextFormField)
+    - Validasi input
+    - Tombol simpan
+3. Detail Screen
+    - Menampilkan detail transaksi
+    - Tombol edit & hapus
+4. Statistik Screen
+    - Grafik pengeluaran
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Struktur Folder Project
+lib/
+├── main.dart
+├── models/
+│ └── transaction_model.dart
+├── screens/
+│ └── home_screen.dart
+├── widgets/
+│ └── transaction_item.dart
+├── services/
+│ └── database_service.dart
+
+
+
+
