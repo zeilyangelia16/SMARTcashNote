@@ -3,7 +3,17 @@ import 'package:smartcashnote/screens/add_transaction_screen.dart';
 import 'package:smartcashnote/screens/statistic_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final VoidCallback toggleTheme;
+
+  final bool isDarkMode;
+
+  const HomeScreen({
+    super.key,
+
+    required this.toggleTheme,
+
+    required this.isDarkMode,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -38,6 +48,14 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
         elevation: 0,
+
+        actions: [
+          IconButton(
+            onPressed: widget.toggleTheme,
+
+            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+          ),
+        ],
       ),
       body: Container(
         color: Colors.grey[100],
