@@ -2,7 +2,32 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class StatisticScreen extends StatelessWidget {
-  const StatisticScreen({super.key});
+  final List<Map<String, dynamic>> transactions;
+
+  const StatisticScreen({super.key, required this.transactions});
+  int getTotalPemasukan() {
+    int total = 0;
+
+    for (var item in transactions) {
+      if (item["type"] == "Pemasukan") {
+        total += item["amount"] as int;
+      }
+    }
+
+    return total;
+  }
+
+  int getTotalPengeluaran() {
+    int total = 0;
+
+    for (var item in transactions) {
+      if (item["type"] == "Pengeluaran") {
+        total += item["amount"] as int;
+      }
+    }
+
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,30 +63,16 @@ class StatisticScreen extends StatelessWidget {
                   PieChartData(
                     sections: [
                       PieChartSectionData(
-                        value: 40,
-                        color: Colors.red,
-                        title: "Makan",
-                        radius: 80,
-                      ),
-
-                      PieChartSectionData(
-                        value: 30,
-                        color: Colors.blue,
-                        title: "Transport",
-                        radius: 80,
-                      ),
-
-                      PieChartSectionData(
-                        value: 20,
+                        value: getTotalPemasukan().toDouble(),
                         color: Colors.green,
-                        title: "Belanja",
+                        title: "Pemasukan",
                         radius: 80,
                       ),
 
                       PieChartSectionData(
-                        value: 10,
-                        color: Colors.orange,
-                        title: "Lainnya",
+                        value: getTotalPengeluaran().toDouble(),
+                        color: Colors.red,
+                        title: "Pengeluaran",
                         radius: 80,
                       ),
                     ],
@@ -79,13 +90,17 @@ class StatisticScreen extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              _buildItem("Makan", "Rp 500.000", Colors.red),
+              _buildItem(
+                "Pemasukan",
+                "Rp ${getTotalPemasukan()}",
+                Colors.green,
+              ),
 
-              _buildItem("Transport", "Rp 300.000", Colors.blue),
-
-              _buildItem("Belanja", "Rp 250.000", Colors.green),
-
-              _buildItem("Lainnya", "Rp 100.000", Colors.orange),
+              _buildItem(
+                "Pengeluaran",
+                "Rp ${getTotalPengeluaran()}",
+                Colors.red,
+              ),
 
               const SizedBox(height: 30),
             ],

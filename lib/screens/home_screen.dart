@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:smartcashnote/screens/add_transaction_screen.dart';
 import 'package:smartcashnote/screens/statistic_screen.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartcashnote/screens/all_transaction_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback toggleTheme;
@@ -21,6 +24,36 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
+
+  bool isBalanceVisible = true;
+
+  Future<void> saveTransactions() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    List<String> data = transactions.map((item) => jsonEncode(item)).toList();
+
+    await prefs.setStringList('transactions', data);
+  }
+
+  Future<void> loadTransactions() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    List<String>? data = prefs.getStringList('transactions');
+
+    if (data != null) {
+      setState(() {
+        transactions = data
+            .map((item) => jsonDecode(item) as Map<String, dynamic>)
+            .toList();
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadTransactions();
+  }
 
   List<Map<String, dynamic>> transactions = [];
 
@@ -83,6 +116,35 @@ class _HomeScreenState extends State<HomeScreen> {
         scrolledUnderElevation: 0,
 
         actions: [
+          // NOTIFIKASI
+          Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Belum ada notifikasi")),
+                  );
+                },
+
+                icon: const Icon(Icons.notifications_none),
+              ),
+
+              Positioned(
+                right: 10,
+                top: 10,
+
+                child: Container(
+                  width: 10,
+                  height: 10,
+
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ],
+          ),
           IconButton(
             onPressed: widget.toggleTheme,
 
@@ -169,20 +231,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         Text(
                           "Saldo Saat Ini",
                           style: TextStyle(color: Colors.white70, fontSize: 18),
                         ),
 
-                        Icon(Icons.remove_red_eye, color: Colors.white),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isBalanceVisible = !isBalanceVisible;
+                            });
+                          },
+
+                          child: Icon(
+                            isBalanceVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+
+                            color: Colors.white,
+                          ),
+                        ),
                       ],
                     ),
 
                     const SizedBox(height: 18),
 
                     Text(
-                      "Rp ${getTotalSaldo()}",
+                      isBalanceVisible ? "Rp ${getTotalSaldo()}" : "Rp •••••••",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 42,
@@ -227,7 +303,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   SizedBox(height: 4),
 
                                   Text(
-                                    "Rp ${getTotalPemasukan()}",
+                                    isBalanceVisible
+                                        ? "Rp ${getTotalPemasukan()}"
+                                        : "Rp •••••",
                                     style: TextStyle(
                                       color: Colors.greenAccent,
                                       fontWeight: FontWeight.bold,
@@ -272,7 +350,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   SizedBox(height: 4),
 
                                   Text(
-                                    "Rp ${getTotalPengeluaran()}",
+                                    isBalanceVisible
+                                        ? "Rp ${getTotalPengeluaran()}"
+                                        : "Rp •••••",
                                     style: TextStyle(
                                       color: Colors.redAccent,
                                       fontWeight: FontWeight.bold,
@@ -305,7 +385,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  Text("Lihat semua", style: TextStyle(color: Colors.indigo)),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              StatisticScreen(transactions: transactions),
+                        ),
+                      );
+                    },
+
+                    child: const Text(
+                      "Lihat semua",
+                      style: TextStyle(color: Colors.indigo),
+                    ),
+                  ),
                 ],
               ),
 
@@ -391,13 +486,28 @@ class _HomeScreenState extends State<HomeScreen> {
               // TRANSAKSI TERBARU
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Text(
                     "Transaksi Terbaru",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
 
-                  Text("Lihat semua", style: TextStyle(color: Colors.indigo)),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AllTransactionScreen(transactions: transactions),
+                        ),
+                      );
+                    },
+
+                    child: const Text(
+                      "Lihat semua",
+                      style: TextStyle(color: Colors.indigo),
+                    ),
+                  ),
                 ],
               ),
 
@@ -417,59 +527,92 @@ class _HomeScreenState extends State<HomeScreen> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       children: transactions.map((item) {
-                        return Card(
-                          color: cardColor,
-                          elevation: 0,
-                          margin: const EdgeInsets.only(bottom: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                        return Dismissible(
+                          key: UniqueKey(),
+
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.only(right: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
                           ),
 
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(14),
+                          onDismissed: (direction) async {
+                            setState(() {
+                              transactions.remove(item);
+                            });
 
-                            leading: CircleAvatar(
-                              radius: 28,
-                              backgroundColor: item["type"] == "Pemasukan"
-                                  ? Colors.green[50]
-                                  : Colors.red[50],
+                            await saveTransactions();
 
-                              child: Icon(
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "${item["title"]} berhasil dihapus",
+                                ),
+                              ),
+                            );
+                          },
+
+                          child: Card(
+                            color: cardColor,
+                            elevation: 0,
+                            margin: const EdgeInsets.only(bottom: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(14),
+
+                              leading: CircleAvatar(
+                                radius: 28,
+                                backgroundColor: item["type"] == "Pemasukan"
+                                    ? Colors.green[50]
+                                    : Colors.red[50],
+
+                                child: Icon(
+                                  item["type"] == "Pemasukan"
+                                      ? Icons.arrow_downward
+                                      : Icons.arrow_upward,
+
+                                  color: item["type"] == "Pemasukan"
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                              ),
+
+                              title: Text(
+                                item["title"],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+
+                              subtitle: Text(
+                                item["type"],
+                                style: TextStyle(color: subTextColor),
+                              ),
+
+                              trailing: Text(
                                 item["type"] == "Pemasukan"
-                                    ? Icons.arrow_downward
-                                    : Icons.arrow_upward,
+                                    ? "+ Rp ${item["amount"]}"
+                                    : "- Rp ${item["amount"]}",
 
-                                color: item["type"] == "Pemasukan"
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                            ),
+                                style: TextStyle(
+                                  color: item["type"] == "Pemasukan"
+                                      ? Colors.green
+                                      : Colors.red,
 
-                            title: Text(
-                              item["title"],
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-
-                            subtitle: Text(
-                              item["type"],
-                              style: TextStyle(color: subTextColor),
-                            ),
-
-                            trailing: Text(
-                              item["type"] == "Pemasukan"
-                                  ? "+ Rp ${item["amount"]}"
-                                  : "- Rp ${item["amount"]}",
-
-                              style: TextStyle(
-                                color: item["type"] == "Pemasukan"
-                                    ? Colors.green
-                                    : Colors.red,
-
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
                           ),
@@ -531,6 +674,7 @@ class _HomeScreenState extends State<HomeScreen> {
             setState(() {
               transactions.add(result as Map<String, dynamic>);
             });
+            saveTransactions();
           }
         },
 
@@ -550,11 +694,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GestureDetector(
       onTap: () {
+        if (index == 1) {
+          Navigator.push(
+            context,
+
+            MaterialPageRoute(
+              builder: (context) =>
+                  AllTransactionScreen(transactions: transactions),
+            ),
+          );
+        }
+
         if (index == 2) {
           Navigator.push(
             context,
 
-            MaterialPageRoute(builder: (context) => const StatisticScreen()),
+            MaterialPageRoute(
+              builder: (context) => StatisticScreen(transactions: transactions),
+            ),
           );
         }
         setState(() {

@@ -10,11 +10,24 @@ class AddTransactionScreen extends StatefulWidget {
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController titleController = TextEditingController();
-
   final TextEditingController amountController = TextEditingController();
 
   String selectedType = "Pengeluaran";
+
+  final TextEditingController noteController = TextEditingController();
+
+  DateTime selectedDate = DateTime.now();
+
+  String selectedCategory = "Makanan";
+
+  final List<String> categories = [
+    "Makanan",
+    "Transport",
+    "Belanja",
+    "Tagihan",
+    "Gaji",
+    "Hiburan",
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -80,33 +93,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                   child: Column(
                     children: [
-                      // NAMA TRANSAKSI
-                      TextFormField(
-                        controller: titleController,
+                      const Align(
+                        alignment: Alignment.centerLeft,
 
-                        decoration: InputDecoration(
-                          labelText: "Nama Transaksi",
+                        child: Text(
+                          "Detail Transaksi",
 
-                          prefixIcon: const Icon(Icons.edit),
-
-                          filled: true,
-
-                          fillColor: Colors.grey[100],
-
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-
-                            borderSide: BorderSide.none,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Nama transaksi wajib diisi";
-                          }
-
-                          return null;
-                        },
                       ),
 
                       const SizedBox(height: 20),
@@ -118,71 +115,306 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         keyboardType: TextInputType.number,
 
                         decoration: InputDecoration(
-                          labelText: "Jumlah",
+                          hintText: "Masukkan jumlah uang",
 
-                          prefixIcon: const Icon(Icons.money),
+                          prefixIcon: const Icon(
+                            Icons.payments_outlined,
+                            color: Color(0xFF4F46E5),
+                          ),
+
+                          prefixText: "Rp ",
 
                           filled: true,
 
-                          fillColor: Colors.grey[100],
+                          fillColor: const Color(0xFFF5F7FB),
+
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                          ),
 
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(20),
+
+                            borderSide: BorderSide.none,
+                          ),
+
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+
+                            borderSide: BorderSide.none,
+                          ),
+
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+
+                            borderSide: const BorderSide(
+                              color: Color(0xFF4F46E5),
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // TANGGAL
+                      GestureDetector(
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDate,
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(2100),
+                          );
+
+                          if (pickedDate != null) {
+                            setState(() {
+                              selectedDate = pickedDate;
+                            });
+                          }
+                        },
+
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 18,
+                          ),
+
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF5F7FB),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.calendar_month,
+                                color: Color(0xFF4F46E5),
+                              ),
+
+                              const SizedBox(width: 12),
+
+                              Text(
+                                "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}",
+
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // KATEGORI
+                      DropdownButtonFormField<String>(
+                        value: selectedCategory,
+
+                        decoration: InputDecoration(
+                          hintText: "Pilih kategori",
+
+                          prefixIcon: const Icon(
+                            Icons.category_outlined,
+                            color: Color(0xFF4F46E5),
+                          ),
+
+                          filled: true,
+
+                          fillColor: const Color(0xFFF5F7FB),
+
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
 
                             borderSide: BorderSide.none,
                           ),
                         ),
 
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Jumlah wajib diisi";
-                          }
+                        items: categories.map((category) {
+                          return DropdownMenuItem(
+                            value: category,
+                            child: Text(category),
+                          );
+                        }).toList(),
 
-                          return null;
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCategory = value!;
+                          });
                         },
                       ),
 
                       const SizedBox(height: 20),
 
-                      // DROPDOWN
-                      DropdownButtonFormField<String>(
-                        value: selectedType,
+                      // CATATAN
+                      TextFormField(
+                        controller: noteController,
+
+                        maxLines: 3,
 
                         decoration: InputDecoration(
-                          labelText: "Kategori",
+                          hintText: "Tambahkan catatan...",
 
-                          prefixIcon: const Icon(Icons.category),
+                          prefixIcon: const Padding(
+                            padding: EdgeInsets.only(bottom: 60),
+                            child: Icon(Icons.notes, color: Color(0xFF4F46E5)),
+                          ),
 
                           filled: true,
 
-                          fillColor: Colors.grey[100],
+                          fillColor: const Color(0xFFF5F7FB),
 
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(20),
 
                             borderSide: BorderSide.none,
                           ),
                         ),
-
-                        items: const [
-                          DropdownMenuItem(
-                            value: "Pemasukan",
-                            child: Text("Pemasukan"),
-                          ),
-
-                          DropdownMenuItem(
-                            value: "Pengeluaran",
-                            child: Text("Pengeluaran"),
-                          ),
-                        ],
-
-                        onChanged: (value) {
-                          setState(() {
-                            selectedType = value!;
-                          });
-                        },
                       ),
 
+                      const SizedBox(height: 30),
+
+                      // PILIH TIPE TRANSAKSI
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedType = "Pemasukan";
+                                });
+                              },
+
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 22,
+                                ),
+
+                                decoration: BoxDecoration(
+                                  color: selectedType == "Pemasukan"
+                                      ? const Color(0xFFDCFCE7)
+                                      : Colors.white,
+
+                                  borderRadius: BorderRadius.circular(24),
+
+                                  border: Border.all(
+                                    color: selectedType == "Pemasukan"
+                                        ? Colors.green
+                                        : Colors.grey.shade300,
+
+                                    width: 2,
+                                  ),
+                                ),
+
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 26,
+                                      backgroundColor:
+                                          selectedType == "Pemasukan"
+                                          ? Colors.green
+                                          : Colors.green[100],
+
+                                      child: Icon(
+                                        Icons.arrow_downward,
+                                        color: selectedType == "Pemasukan"
+                                            ? Colors.white
+                                            : Colors.green,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 14),
+
+                                    Text(
+                                      "Pemasukan",
+
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+
+                                        color: selectedType == "Pemasukan"
+                                            ? Colors.green[800]
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(width: 18),
+
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedType = "Pengeluaran";
+                                });
+                              },
+
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 22,
+                                ),
+
+                                decoration: BoxDecoration(
+                                  color: selectedType == "Pengeluaran"
+                                      ? const Color(0xFFFEE2E2)
+                                      : Colors.white,
+
+                                  borderRadius: BorderRadius.circular(24),
+
+                                  border: Border.all(
+                                    color: selectedType == "Pengeluaran"
+                                        ? Colors.red
+                                        : Colors.grey.shade300,
+
+                                    width: 2,
+                                  ),
+                                ),
+
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 26,
+                                      backgroundColor:
+                                          selectedType == "Pengeluaran"
+                                          ? Colors.red
+                                          : Colors.red[100],
+
+                                      child: Icon(
+                                        Icons.arrow_upward,
+                                        color: selectedType == "Pengeluaran"
+                                            ? Colors.white
+                                            : Colors.red,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 14),
+
+                                    Text(
+                                      "Pengeluaran",
+
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+
+                                        color: selectedType == "Pengeluaran"
+                                            ? Colors.red[800]
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 30),
 
                       // TOMBOL SIMPAN
@@ -195,8 +427,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF4F46E5),
 
+                            elevation: 0,
+
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(22),
                             ),
                           ),
 
@@ -207,17 +441,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                               );
 
                               Navigator.pop(context, {
-                                "title": titleController.text,
-
+                                "title": selectedCategory,
                                 "type": selectedType,
-
                                 "amount": int.parse(amountController.text),
+                                "category": selectedCategory,
+                                "note": noteController.text,
+                                "date": selectedDate.toString(),
                               });
                             }
                           },
 
                           child: const Text(
-                            "Simpan Transaksi",
+                            "Tambah Transaksi",
 
                             style: TextStyle(
                               color: Colors.white,
