@@ -1,16 +1,17 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:smartcashnote/models/transaction.dart';
 
 class StatisticScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> transactions;
+  final List<TransactionModel> transactions;
 
   const StatisticScreen({super.key, required this.transactions});
   int getTotalPemasukan() {
     int total = 0;
 
     for (var item in transactions) {
-      if (item["type"] == "Pemasukan") {
-        total += item["amount"] as int;
+      if (item.type == "Pemasukan") {
+        total += item.amount;
       }
     }
 
@@ -21,8 +22,8 @@ class StatisticScreen extends StatelessWidget {
     int total = 0;
 
     for (var item in transactions) {
-      if (item["type"] == "Pengeluaran") {
-        total += item["amount"] as int;
+      if (item.type == "Pengeluaran") {
+        total += item.amount;
       }
     }
 

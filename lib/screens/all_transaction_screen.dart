@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:smartcashnote/models/transaction.dart';
 
 class AllTransactionScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> transactions;
+  final List<TransactionModel> transactions;
 
   const AllTransactionScreen({super.key, required this.transactions});
 
@@ -19,7 +20,7 @@ class AllTransactionScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final item = transactions[index];
 
-                final isIncome = item["type"] == "Pemasukan";
+                final isIncome = item.type == "Pemasukan";
 
                 return Card(
                   elevation: 0,
@@ -46,31 +47,26 @@ class AllTransactionScreen extends StatelessWidget {
                     ),
 
                     title: Text(
-                      item["title"],
+                      item.category ?? "-",
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
 
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-
                       children: [
-                        Text(item["category"] ?? ""),
+                        Text(item.note ?? ""),
 
                         const SizedBox(height: 4),
 
                         Text(
-                          item["date"] != null
-                              ? item["date"].toString().substring(0, 10)
-                              : "",
-                          style: const TextStyle(color: Colors.grey),
+                          item.date ?? "",
+                          style: const TextStyle(fontSize: 12),
                         ),
                       ],
                     ),
 
                     trailing: Text(
-                      isIncome
-                          ? "+ Rp ${item["amount"]}"
-                          : "- Rp ${item["amount"]}",
+                      isIncome ? "+ Rp ${item.amount}" : "- Rp ${item.amount}",
 
                       style: TextStyle(
                         color: isIncome ? Colors.green : Colors.red,

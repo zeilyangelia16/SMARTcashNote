@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:smartcashnote/screens/add_transaction_screen.dart';
 import 'package:smartcashnote/screens/statistic_screen.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartcashnote/screens/all_transaction_screen.dart';
+import 'package:smartcashnote/screens/profile_screen.dart';
+import 'package:smartcashnote/models/transaction.dart';
+import 'package:smartcashnote/services/database_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback toggleTheme;
@@ -27,44 +28,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isBalanceVisible = true;
 
-  Future<void> saveTransactions() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    List<String> data = transactions.map((item) => jsonEncode(item)).toList();
-
-    await prefs.setStringList('transactions', data);
-  }
-
-  Future<void> loadTransactions() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    List<String>? data = prefs.getStringList('transactions');
-
-    if (data != null) {
-      setState(() {
-        transactions = data
-            .map((item) => jsonDecode(item) as Map<String, dynamic>)
-            .toList();
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    loadTransactions();
+    fetchTransactions();
   }
 
-  List<Map<String, dynamic>> transactions = [];
+  Future<void> fetchTransactions() async {
+    final data = await DatabaseService.loadTransactions();
+
+    setState(() {
+      transactions = data;
+    });
+  }
+
+  List<TransactionModel> transactions = [];
 
   int getTotalSaldo() {
     int total = 0;
 
     for (var item in transactions) {
-      if (item["type"] == "Pemasukan") {
-        total += item["amount"] as int;
+      if (item.type == "Pemasukan") {
+        total += item.amount;
       } else {
-        total -= item["amount"] as int;
+        total -= item.amount;
       }
     }
 
@@ -75,8 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
     int total = 0;
 
     for (var item in transactions) {
-      if (item["type"] == "Pemasukan") {
-        total += item["amount"] as int;
+      if (item.type == "Pemasukan") {
+        total += item.amount;
       }
     }
 
@@ -87,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
     int total = 0;
 
     for (var item in transactions) {
-      if (item["type"] == "Pengeluaran") {
-        total += item["amount"] as int;
+      if (item.type == "Pengeluaran") {
+        total += item.amount;
       }
     }
 
@@ -548,12 +535,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               transactions.remove(item);
                             });
 
-                            await saveTransactions();
+                            await DatabaseService.saveTransactions(
+                              transactions,
+                            );
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  "${item["title"]} berhasil dihapus",
+                                  "${item.category ?? "Transaksi"} berhasil dihapus",
                                 ),
                               ),
                             );
@@ -572,23 +561,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               leading: CircleAvatar(
                                 radius: 28,
-                                backgroundColor: item["type"] == "Pemasukan"
+                                backgroundColor: item.type == "Pemasukan"
                                     ? Colors.green[50]
                                     : Colors.red[50],
 
                                 child: Icon(
-                                  item["type"] == "Pemasukan"
+                                  item.type == "Pemasukan"
                                       ? Icons.arrow_downward
                                       : Icons.arrow_upward,
 
-                                  color: item["type"] == "Pemasukan"
+                                  color: item.type == "Pemasukan"
                                       ? Colors.green
                                       : Colors.red,
                                 ),
                               ),
 
                               title: Text(
-                                item["title"],
+                                item.category ?? "-",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -596,17 +585,17 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
 
                               subtitle: Text(
-                                item["type"],
+                                item.type,
                                 style: TextStyle(color: subTextColor),
                               ),
 
                               trailing: Text(
-                                item["type"] == "Pemasukan"
-                                    ? "+ Rp ${item["amount"]}"
-                                    : "- Rp ${item["amount"]}",
+                                item.type == "Pemasukan"
+                                    ? "+ Rp ${item.amount}"
+                                    : "- Rp ${item.amount}",
 
                                 style: TextStyle(
-                                  color: item["type"] == "Pemasukan"
+                                  color: item.type == "Pemasukan"
                                       ? Colors.green
                                       : Colors.red,
 
@@ -672,9 +661,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
           if (result != null) {
             setState(() {
-              transactions.add(result as Map<String, dynamic>);
+              transactions.add(result as TransactionModel);
             });
-            saveTransactions();
+            await DatabaseService.saveTransactions(transactions);
           }
         },
 
@@ -714,6 +703,20 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         }
+
+        if (index == 3) {
+          Navigator.push(
+            context,
+
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(
+                isDarkMode: widget.isDarkMode,
+                toggleTheme: widget.toggleTheme,
+              ),
+            ),
+          );
+        }
+
         setState(() {
           currentIndex = index;
         });
