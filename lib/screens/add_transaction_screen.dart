@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartcashnote/models/transaction.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -153,6 +154,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Masukkan jumlah transaksi';
+                          }
+                          if (int.tryParse(value) == null) {
+                            return 'Masukkan angka yang valid';
+                          }
+                          return null;
+                        },
                       ),
 
                       const SizedBox(height: 20),
@@ -434,20 +444,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             ),
                           ),
 
-                          onPressed: () async {
+                          onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              await Future.delayed(
-                                const Duration(milliseconds: 500),
+                              final newTransaction = TransactionModel(
+                                type: selectedType,
+                                amount: int.parse(amountController.text),
+                                category: selectedCategory,
+                                note: noteController.text,
+                                date:
+                                    "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}",
                               );
 
-                              Navigator.pop(context, {
-                                "title": selectedCategory,
-                                "type": selectedType,
-                                "amount": int.parse(amountController.text),
-                                "category": selectedCategory,
-                                "note": noteController.text,
-                                "date": selectedDate.toString(),
-                              });
+                              Navigator.pop(context, newTransaction);
                             }
                           },
 

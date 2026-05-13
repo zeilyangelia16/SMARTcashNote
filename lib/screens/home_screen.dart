@@ -28,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isBalanceVisible = true;
 
+  List<TransactionModel> transactions = [];
+
   @override
   void initState() {
     super.initState();
@@ -35,14 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchTransactions() async {
-    final data = await DatabaseService.loadTransactions();
+    final data = await DatabaseService.getTransactions();
+
+    print(data.length);
 
     setState(() {
       transactions = data;
     });
   }
-
-  List<TransactionModel> transactions = [];
 
   int getTotalSaldo() {
     int total = 0;
@@ -171,26 +173,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Hai, Selamat Datang 👋",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Hai, Selamat Datang 👋",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
 
-                        SizedBox(height: 8),
+                          const SizedBox(height: 8),
 
-                        Text(
-                          "Kelola keuanganmu dengan bijak",
-                          style: TextStyle(color: subTextColor, fontSize: 16),
-                        ),
-                      ],
+                          Text(
+                            "Kelola keuanganmu dengan bijak",
+                            style: TextStyle(color: subTextColor, fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
+
+                    const SizedBox(width: 12),
 
                     const Icon(
                       Icons.account_balance_wallet,
@@ -276,30 +284,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               const SizedBox(width: 14),
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Pemasukan",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Pemasukan",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
 
-                                  SizedBox(height: 4),
+                                    const SizedBox(height: 4),
 
-                                  Text(
-                                    isBalanceVisible
-                                        ? "Rp ${getTotalPemasukan()}"
-                                        : "Rp •••••",
-                                    style: TextStyle(
-                                      color: Colors.greenAccent,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
+                                    Text(
+                                      isBalanceVisible
+                                          ? "Rp ${getTotalPemasukan()}"
+                                          : "Rp •••••",
+                                      style: TextStyle(
+                                        color: Colors.greenAccent,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -323,30 +337,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               const SizedBox(width: 14),
 
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Pengeluaran",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Pengeluaran",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
 
-                                  SizedBox(height: 4),
+                                    const SizedBox(height: 4),
 
-                                  Text(
-                                    isBalanceVisible
-                                        ? "Rp ${getTotalPengeluaran()}"
-                                        : "Rp •••••",
-                                    style: TextStyle(
-                                      color: Colors.redAccent,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
+                                    Text(
+                                      isBalanceVisible
+                                          ? "Rp ${getTotalPengeluaran()}"
+                                          : "Rp •••••",
+                                      style: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -531,18 +551,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
 
                           onDismissed: (direction) async {
-                            setState(() {
-                              transactions.remove(item);
-                            });
+                            await DatabaseService.deleteTransaction(item.id!);
 
-                            await DatabaseService.saveTransactions(
-                              transactions,
-                            );
+                            fetchTransactions();
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  "${item.category ?? "Transaksi"} berhasil dihapus",
+                                  "${item.category} berhasil dihapus",
                                 ),
                               ),
                             );
@@ -577,7 +593,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
 
                               title: Text(
-                                item.category ?? "-",
+                                item.category,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -660,10 +676,16 @@ class _HomeScreenState extends State<HomeScreen> {
           );
 
           if (result != null) {
-            setState(() {
-              transactions.add(result as TransactionModel);
-            });
-            await DatabaseService.saveTransactions(transactions);
+            print(result);
+            final newTransaction = result as TransactionModel;
+
+            print("MASUK KE SQLITE");
+
+            await DatabaseService.insertTransaction(newTransaction);
+
+            print("BERHASIL DISIMPAN");
+
+            fetchTransactions();
           }
         },
 

@@ -1,35 +1,44 @@
 class TransactionModel {
-  final String? category;
-  final String? note;
+  final int? id;
+
   final String type;
+
   final int amount;
-  final String? date;
+
+  final String category;
+
+  final String note;
+
+  final String date;
 
   TransactionModel({
-    this.category,
-    this.note,
+    this.id,
     required this.type,
     required this.amount,
-    this.date,
+    required this.category,
+    required this.note,
+    required this.date,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      "category": category,
-      "note": note,
+      "id": id,
       "type": type,
       "amount": amount,
+      "category": category,
+      "note": note,
       "date": date,
     };
   }
 
-  factory TransactionModel.fromJson(Map<String, dynamic> json) {
+  factory TransactionModel.fromMap(Map<String, dynamic> map) {
     return TransactionModel(
-      category: json["category"],
-      note: json["note"],
-      type: json["type"],
-      amount: json["amount"],
-      date: json["date"],
+      id: map["id"],
+      type: map["type"],
+      amount: map["amount"],
+      category: map["category"],
+      note: map["note"],
+      date: map["date"],
     );
   }
 }
