@@ -4,7 +4,9 @@ import 'package:smartcashnote/screens/statistic_screen.dart';
 import 'package:smartcashnote/screens/all_transaction_screen.dart';
 import 'package:smartcashnote/screens/profile_screen.dart';
 import 'package:smartcashnote/models/transaction.dart';
+import 'package:smartcashnote/models/user.dart';
 import 'package:smartcashnote/services/database_service.dart';
+import 'package:smartcashnote/services/session_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback toggleTheme;
@@ -30,20 +32,58 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<TransactionModel> transactions = [];
 
+  int? userId;
+  String userName = "Pengguna SmartCashNote";
+  String userEmail = "smartcashnote@gmail.com";
+
   @override
   void initState() {
     super.initState();
-    fetchTransactions();
+    _initializeSession();
+  }
+
+  Future<void> _initializeSession() async {
+    final session = await SessionService.getSession();
+    if (session.hasValidSession) {
+      final currentUser =
+          await DatabaseService.getUserById(session.userId) ??
+          UserModel(
+            id: session.userId,
+            name: session.userName,
+            email: session.userEmail,
+          );
+      if (!mounted) return;
+      setState(() {
+        userId = session.userId;
+        userName = currentUser.name;
+        userEmail = currentUser.email;
+      });
+      await fetchTransactions();
+    }
   }
 
   Future<void> fetchTransactions() async {
-    final data = await DatabaseService.getTransactions();
+    if (userId == null) return;
+
+    final data = await DatabaseService.getTransactions(userId: userId!);
 
     print(data.length);
 
     setState(() {
       transactions = data;
     });
+  }
+
+  Future<void> fetchUser() async {
+    if (userId == null) return;
+
+    final user = await DatabaseService.getUserById(userId!);
+    if (user != null) {
+      setState(() {
+        userName = user.name;
+        userEmail = user.email;
+      });
+    }
   }
 
   int getTotalSaldo() {
@@ -99,6 +139,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final subTextColor = widget.isDarkMode ? Colors.white70 : Colors.grey;
     return Scaffold(
       appBar: AppBar(
+        title: const Text(
+          "CashNote",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF4F46E5),
+          ),
+        ),
+
         backgroundColor: Colors.transparent,
         foregroundColor: textColor,
         elevation: 0,
@@ -148,21 +196,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // TITLE
-              const Text(
-                "CashNote",
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF4F46E5),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
               // WELCOME CARD
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: cardColor,
                   borderRadius: BorderRadius.circular(24),
@@ -179,19 +215,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             "Hai, Selamat Datang 👋",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: textColor,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
 
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
 
                           Text(
                             "Kelola keuanganmu dengan bijak",
-                            style: TextStyle(color: subTextColor, fontSize: 16),
+                            style: TextStyle(color: subTextColor, fontSize: 12),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
@@ -203,23 +240,37 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Icon(
                       Icons.account_balance_wallet,
                       color: Colors.indigo,
-                      size: 70,
+                      size: 38,
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 14),
 
               // CARD SALDO
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                     colors: [Color(0xFF4338CA), Color(0xFF6366F1)],
                   ),
-                  borderRadius: BorderRadius.circular(28),
+
+                  borderRadius: BorderRadius.circular(22),
+
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.indigo.withOpacity(0.18),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           "Saldo Saat Ini",
-                          style: TextStyle(color: Colors.white70, fontSize: 18),
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
                         ),
 
                         GestureDetector(
@@ -250,22 +301,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
 
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 6),
 
                     Text(
                       isBalanceVisible ? "Rp ${getTotalSaldo()}" : "Rp •••••••",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 42,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 8),
 
                     Divider(color: Colors.white24),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 8),
 
                     Row(
                       children: [
@@ -273,17 +324,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: Row(
                             children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.green.withOpacity(0.2),
-                                radius: 26,
-                                child: const Icon(
-                                  Icons.arrow_downward,
-                                  color: Colors.greenAccent,
-                                ),
-                              ),
-
-                              const SizedBox(width: 14),
-
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       "Pemasukan",
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 16,
+                                        fontSize: 14,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -307,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: TextStyle(
                                         color: Colors.greenAccent,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 20,
+                                        fontSize: 16,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -321,22 +361,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         Container(height: 60, width: 1, color: Colors.white24),
 
+                        const SizedBox(width: 14),
+
                         // PENGELUARAN
                         Expanded(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.red.withOpacity(0.2),
-                                radius: 26,
-                                child: const Icon(
-                                  Icons.arrow_upward,
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-
-                              const SizedBox(width: 14),
-
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,7 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       "Pengeluaran",
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 16,
+                                        fontSize: 14,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -360,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: TextStyle(
                                         color: Colors.redAccent,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 20,
+                                        fontSize: 16,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -377,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 24),
 
               // RINGKASAN
               Row(
@@ -386,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     "Ringkasan Bulan Ini",
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: textColor,
                     ),
@@ -411,21 +442,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               Row(
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 16,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.green[50],
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
+                            radius: 16,
                             backgroundColor: Color(0xFFD1FAE5),
                             child: Icon(
                               Icons.arrow_downward,
@@ -433,16 +475,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
 
-                          SizedBox(height: 20),
+                          SizedBox(height: 8),
 
-                          Text("Pemasukan", style: TextStyle(fontSize: 18)),
+                          Text("Pemasukan", style: TextStyle(fontSize: 14)),
 
-                          SizedBox(height: 10),
+                          SizedBox(height: 4),
 
                           Text(
                             "Rp ${getTotalPemasukan()}",
                             style: TextStyle(
-                              fontSize: 28,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -455,29 +497,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 16,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red[50],
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
+                            radius: 16,
                             backgroundColor: Color(0xFFFEE2E2),
                             child: Icon(Icons.arrow_upward, color: Colors.red),
                           ),
 
-                          SizedBox(height: 20),
+                          SizedBox(height: 8),
 
-                          Text("Pengeluaran", style: TextStyle(fontSize: 18)),
+                          Text("Pengeluaran", style: TextStyle(fontSize: 14)),
 
-                          SizedBox(height: 10),
+                          SizedBox(height: 4),
 
                           Text(
                             "Rp ${getTotalPengeluaran()}",
                             style: TextStyle(
-                              fontSize: 28,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -488,7 +541,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 24),
 
               // TRANSAKSI TERBARU
               Row(
@@ -496,7 +549,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     "Transaksi Terbaru",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
 
                   GestureDetector(
@@ -518,7 +571,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               transactions.isEmpty
                   ? const Padding(
@@ -533,7 +586,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   : ListView(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      children: transactions.map((item) {
+                      children: transactions.take(3).map((item) {
                         return Dismissible(
                           key: UniqueKey(),
 
@@ -567,16 +620,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Card(
                             color: cardColor,
                             elevation: 0,
-                            margin: const EdgeInsets.only(bottom: 14),
+                            margin: const EdgeInsets.only(bottom: 10),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(16),
                             ),
 
                             child: ListTile(
-                              contentPadding: const EdgeInsets.all(14),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
 
                               leading: CircleAvatar(
-                                radius: 28,
+                                radius: 18,
                                 backgroundColor: item.type == "Pemasukan"
                                     ? Colors.green[50]
                                     : Colors.red[50],
@@ -596,7 +652,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 item.category,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontSize: 16,
                                 ),
                               ),
 
@@ -616,7 +672,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       : Colors.red,
 
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontSize: 15,
                                 ),
                               ),
                             ),
@@ -624,6 +680,34 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }).toList(),
                     ),
+              if (transactions.length > 4)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AllTransactionScreen(
+                              transactions: transactions,
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: const Text(
+                        "Transaksi lainnya>>>",
+                        style: TextStyle(
+                          color: Colors.indigo,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -675,13 +759,22 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
 
-          if (result != null) {
+          if (result != null && userId != null) {
             print(result);
             final newTransaction = result as TransactionModel;
+            final transactionWithUser = TransactionModel(
+              id: newTransaction.id,
+              userId: userId,
+              type: newTransaction.type,
+              amount: newTransaction.amount,
+              category: newTransaction.category,
+              note: newTransaction.note,
+              date: newTransaction.date,
+            );
 
             print("MASUK KE SQLITE");
 
-            await DatabaseService.insertTransaction(newTransaction);
+            await DatabaseService.insertTransaction(transactionWithUser);
 
             print("BERHASIL DISIMPAN");
 
@@ -729,14 +822,17 @@ class _HomeScreenState extends State<HomeScreen> {
         if (index == 3) {
           Navigator.push(
             context,
-
             MaterialPageRoute(
               builder: (context) => ProfileScreen(
                 isDarkMode: widget.isDarkMode,
                 toggleTheme: widget.toggleTheme,
+                currentName: userName,
+                currentEmail: userEmail,
               ),
             ),
-          );
+          ).then((_) {
+            fetchUser();
+          });
         }
 
         setState(() {
