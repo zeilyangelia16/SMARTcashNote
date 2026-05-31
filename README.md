@@ -1,6 +1,6 @@
-# Smart CashNote
+# CashNote
 
-Smart CashNote adalah aplikasi mobile berbasis Flutter yang digunakan untuk mencatat dan mengelola keuangan harian. Aplikasi ini dirancang untuk membantu pengguna memantau pemasukan dan pengeluaran secara sederhana, cepat, dan efisien.
+CashNote adalah aplikasi mobile berbasis Flutter yang digunakan untuk mencatat dan mengelola keuangan harian. Aplikasi ini dirancang untuk membantu pengguna memantau pemasukan dan pengeluaran secara sederhana, cepat, dan efisien.
 
 ## Tujuan Pengembangan
 - Membantu pengguna mencatat transaksi keuangan harian
@@ -51,14 +51,20 @@ Smart CashNote adalah aplikasi mobile berbasis Flutter yang digunakan untuk menc
 lib/
 ├── main.dart
 ├── models/
+| ├── user.dart
 │ └── transaction_model.dart
 ├── screens/
 | ├── home_screen.dart
-| ├── add_transaction_screen.dart 
+| ├── add_transaction_screen.dart
+| ├── all_transaction_screen.dart
+| ├── profile_screen.dart
+| ├── edit_profil_screen.dart
+| ├── login_screen.dart
 │ └── statistic_screen.dart
 ├── widgets/
 │ └── transaction_item.dart
 ├── services/
+| ├── session_servce.dart
 │ └── database_service.dart
 
 

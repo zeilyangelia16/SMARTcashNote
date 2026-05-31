@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:smartcashnote/screens/home_screen.dart';
 import 'package:smartcashnote/screens/login_screen.dart';
 import 'package:smartcashnote/services/session_service.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting('id_ID', null);
+
   runApp(const MyApp());
 }
 

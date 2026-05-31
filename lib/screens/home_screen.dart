@@ -153,35 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
         scrolledUnderElevation: 0,
 
         actions: [
-          // NOTIFIKASI
-          Stack(
-            children: [
-              IconButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Belum ada notifikasi")),
-                  );
-                },
-
-                icon: const Icon(Icons.notifications_none),
-              ),
-
-              Positioned(
-                right: 10,
-                top: 10,
-
-                child: Container(
-                  width: 10,
-                  height: 10,
-
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-            ],
-          ),
           IconButton(
             onPressed: widget.toggleTheme,
 
@@ -708,6 +679,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+              const SizedBox(height: 22),
             ],
           ),
         ),
@@ -716,10 +688,11 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
 
-        notchMargin: 10,
+        notchMargin: 2,
+        elevation: 8,
 
         child: SizedBox(
-          height: 70,
+          height: 60,
 
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -749,40 +722,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
+      floatingActionButton: SizedBox(
+        width: 52,
+        height: 52,
+        child: FloatingActionButton(
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
 
-            MaterialPageRoute(
-              builder: (context) => const AddTransactionScreen(),
-            ),
-          );
-
-          if (result != null && userId != null) {
-            print(result);
-            final newTransaction = result as TransactionModel;
-            final transactionWithUser = TransactionModel(
-              id: newTransaction.id,
-              userId: userId,
-              type: newTransaction.type,
-              amount: newTransaction.amount,
-              category: newTransaction.category,
-              note: newTransaction.note,
-              date: newTransaction.date,
+              MaterialPageRoute(
+                builder: (context) => const AddTransactionScreen(),
+              ),
             );
 
-            print("MASUK KE SQLITE");
+            if (result != null && userId != null) {
+              print(result);
+              final newTransaction = result as TransactionModel;
+              final transactionWithUser = TransactionModel(
+                id: newTransaction.id,
+                userId: userId,
+                type: newTransaction.type,
+                amount: newTransaction.amount,
+                category: newTransaction.category,
+                note: newTransaction.note,
+                date: newTransaction.date,
+              );
 
-            await DatabaseService.insertTransaction(transactionWithUser);
+              print("MASUK KE SQLITE");
 
-            print("BERHASIL DISIMPAN");
+              await DatabaseService.insertTransaction(transactionWithUser);
 
-            fetchTransactions();
-          }
-        },
+              print("BERHASIL DISIMPAN");
 
-        child: const Icon(Icons.add),
+              fetchTransactions();
+            }
+          },
+
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -840,29 +817,33 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       },
 
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-
-        children: [
-          Icon(
-            icon,
-            color: isSelected
-                ? Colors.indigo
-                : (widget.isDarkMode ? Colors.white70 : Colors.grey),
-          ),
-
-          Text(
-            label,
-
-            style: TextStyle(
+      child: Padding(
+        padding: EdgeInsets.zero,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 26,
               color: isSelected
                   ? Colors.indigo
                   : (widget.isDarkMode ? Colors.white70 : Colors.grey),
-
-              fontSize: 12,
             ),
-          ),
-        ],
+
+            Text(
+              label,
+
+              style: TextStyle(
+                color: isSelected
+                    ? Colors.indigo
+                    : (widget.isDarkMode ? Colors.white70 : Colors.grey),
+
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -167,22 +167,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: "Keamanan",
                     textColor: textColor,
                     onTap: () {
-                      showDialog(
+                      showModalBottomSheet(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text("Keamanan"),
-                          content: const Text(
-                            "Data transaksi tersimpan aman di SQLite lokal perangkat.",
+                        backgroundColor: cardColor,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30),
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("OK"),
-                            ),
-                          ],
                         ),
+
+                        builder: (context) {
+                          return Padding(
+                            padding: const EdgeInsets.all(24),
+
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 5,
+
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[400],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 24),
+
+                                const CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: Color(0xFFE0E7FF),
+
+                                  child: Icon(
+                                    Icons.security,
+                                    color: Colors.indigo,
+                                    size: 35,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 20),
+
+                                Text(
+                                  "Keamanan Data",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 14),
+
+                                Text(
+                                  "Semua transaksi disimpan secara lokal menggunakan SQLite sehingga data tetap aman dan privat.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: subTextColor,
+                                    height: 1.5,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 30),
+                              ],
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
@@ -194,10 +245,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: "Bantuan",
                     textColor: textColor,
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Hubungi support@smartcashnote.com"),
+                      showModalBottomSheet(
+                        context: context,
+                        backgroundColor: cardColor,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30),
+                          ),
                         ),
+
+                        builder: (context) {
+                          return Padding(
+                            padding: const EdgeInsets.all(24),
+
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 5,
+
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[400],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 24),
+
+                                const CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: Color(0xFFE0E7FF),
+
+                                  child: Icon(
+                                    Icons.help_outline,
+                                    color: Colors.indigo,
+                                    size: 35,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 20),
+
+                                Text(
+                                  "Pusat Bantuan",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 14),
+
+                                ListTile(
+                                  leading: const Icon(Icons.email_outlined),
+                                  title: const Text("Email Support"),
+                                  subtitle: const Text(
+                                    "support@smartcashnote.com",
+                                  ),
+                                ),
+
+                                ListTile(
+                                  leading: const Icon(Icons.info_outline),
+                                  title: const Text("Jam Bantuan"),
+                                  subtitle: const Text("08.00 - 21.00"),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
@@ -209,22 +326,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: "Tentang Aplikasi",
                     textColor: textColor,
                     onTap: () {
-                      showDialog(
+                      showModalBottomSheet(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text("Tentang SmartCashNote"),
-                          content: const Text(
-                            "SmartCashNote adalah aplikasi pencatatan keuangan pribadi yang membantu Anda mengelola pemasukan dan pengeluaran dengan mudah. Data transaksi disimpan secara lokal di perangkat Anda menggunakan SQLite, sehingga aman dan dapat diakses kapan saja tanpa koneksi internet.",
+                        backgroundColor: cardColor,
+                        isScrollControlled: true,
+
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30),
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("OK"),
-                            ),
-                          ],
                         ),
+
+                        builder: (context) {
+                          return Padding(
+                            padding: const EdgeInsets.all(24),
+
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 5,
+
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[400],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 24),
+
+                                const CircleAvatar(
+                                  radius: 40,
+                                  backgroundColor: Color(0xFFE0E7FF),
+
+                                  child: Icon(
+                                    Icons.account_balance_wallet,
+                                    color: Colors.indigo,
+                                    size: 40,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 20),
+
+                                Text(
+                                  "SmartCashNote",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                Text(
+                                  "Aplikasi pencatatan keuangan modern untuk membantu pengguna mengelola pemasukan dan pengeluaran dengan mudah.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: subTextColor,
+                                    height: 1.5,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 24),
+
+                                Text(
+                                  "Version 1.0.0",
+                                  style: TextStyle(color: subTextColor),
+                                ),
+
+                                const SizedBox(height: 30),
+                              ],
+                            ),
+                          );
+                        },
                       );
                     },
                   ),

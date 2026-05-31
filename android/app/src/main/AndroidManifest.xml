@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="smartcashnote"
+        android:label="CashNote"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
