@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/models/transaction.dart';
+import '../models/transaction.dart';
 
 class StatisticScreen extends StatelessWidget {
   final List<TransactionModel> transactions;

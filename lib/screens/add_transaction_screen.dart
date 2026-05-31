@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/models/transaction.dart';
+import '../models/transaction.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/models/user.dart';
-import 'package:smartcashnote/services/database_service.dart';
+import '../models/user.dart';
+import '../services/database_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String currentName;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/models/user.dart';
-import 'package:smartcashnote/services/database_service.dart';
-import 'package:smartcashnote/services/session_service.dart';
+import '../models/user.dart';
+import '../services/database_service.dart';
+import '../services/session_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

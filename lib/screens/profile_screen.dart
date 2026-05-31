@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/screens/edit_profil_screen.dart';
-import 'package:smartcashnote/services/session_service.dart';
+import 'edit_profil_screen.dart';
+import '../services/session_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   final bool isDarkMode;

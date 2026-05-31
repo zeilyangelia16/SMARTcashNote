@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/models/transaction.dart';
+import '../models/transaction.dart';
 
 class TransactionItem extends StatelessWidget {
   final TransactionModel item;
@@ -39,19 +39,19 @@ class TransactionItem extends StatelessWidget {
         ),
 
         title: Text(
-          item.category ?? "-",
+          item.category,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
 
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item.note ?? "", style: TextStyle(color: subTextColor)),
+            Text(item.note, style: TextStyle(color: subTextColor)),
 
             const SizedBox(height: 4),
 
             Text(
-              item.date ?? "",
+              item.date,
               style: TextStyle(fontSize: 12, color: subTextColor),
             ),
           ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/screens/home_screen.dart';
-import 'package:smartcashnote/screens/login_screen.dart';
-import 'package:smartcashnote/services/session_service.dart';
+import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'services/session_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> main() async {

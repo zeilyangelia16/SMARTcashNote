@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/screens/add_transaction_screen.dart';
-import 'package:smartcashnote/screens/statistic_screen.dart';
-import 'package:smartcashnote/screens/all_transaction_screen.dart';
-import 'package:smartcashnote/screens/profile_screen.dart';
-import 'package:smartcashnote/models/transaction.dart';
-import 'package:smartcashnote/models/user.dart';
-import 'package:smartcashnote/services/database_service.dart';
-import 'package:smartcashnote/services/session_service.dart';
+import 'add_transaction_screen.dart';
+import 'statistic_screen.dart';
+import 'all_transaction_screen.dart';
+import 'profile_screen.dart';
+import '../models/transaction.dart';
+import '../models/user.dart';
+import '../services/database_service.dart';
+import '../services/session_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback toggleTheme;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smartcashnote/models/transaction.dart';
-import 'package:smartcashnote/services/database_service.dart';
+import '../models/transaction.dart';
+import '../services/database_service.dart';
 import 'package:intl/intl.dart';
 
 class AllTransactionScreen extends StatefulWidget {
@@ -196,13 +196,13 @@ class _AllTransactionScreenState extends State<AllTransactionScreen> {
                                     0.1,
                                   ),
                                   child: Icon(
-                                    widget.getCategoryIcon(item.category ?? ""),
+                                    widget.getCategoryIcon(item.category),
                                     color: Colors.indigo,
                                     size: 18,
                                   ),
                                 ),
                                 title: Text(
-                                  item.category ?? "-",
+                                  item.category,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
@@ -212,7 +212,7 @@ class _AllTransactionScreenState extends State<AllTransactionScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      item.note ?? "",
+                                      item.note,
                                       style: const TextStyle(fontSize: 11),
                                     ),
                                     const SizedBox(height: 2),
