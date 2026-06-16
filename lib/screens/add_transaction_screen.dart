@@ -28,21 +28,31 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     "Tagihan",
     "Gaji",
     "Hiburan",
+    "Lainnya",
   ];
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final fillColor = isDark
+        ? const Color(0xFF1E1E1E)
+        : const Color(0xFFF5F7FB);
+    final cardColor = theme.cardColor;
+    final borderColor = isDark ? Colors.grey.shade800 : Colors.grey.shade300;
+    final bodyTextColor = isDark ? Colors.white : Colors.black;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Tambah Transaksi"),
 
         centerTitle: true,
 
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF4F46E5),
 
         elevation: 0,
 
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.white,
       ),
 
       body: SingleChildScrollView(
@@ -83,7 +93,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   padding: const EdgeInsets.all(20),
 
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardColor,
 
                     borderRadius: BorderRadius.circular(25),
 
@@ -127,7 +137,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                           filled: true,
 
-                          fillColor: const Color(0xFFF5F7FB),
+                          fillColor: fillColor,
 
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 20,
@@ -191,7 +201,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           ),
 
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF5F7FB),
+                            color: fillColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
 
@@ -230,7 +240,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                           filled: true,
 
-                          fillColor: const Color(0xFFF5F7FB),
+                          fillColor: fillColor,
 
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -271,7 +281,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                           filled: true,
 
-                          fillColor: const Color(0xFFF5F7FB),
+                          fillColor: fillColor,
 
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -304,14 +314,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 decoration: BoxDecoration(
                                   color: selectedType == "Pemasukan"
                                       ? const Color(0xFFDCFCE7)
-                                      : Colors.white,
+                                      : cardColor,
 
                                   borderRadius: BorderRadius.circular(24),
 
                                   border: Border.all(
                                     color: selectedType == "Pemasukan"
                                         ? Colors.green
-                                        : Colors.grey.shade300,
+                                        : borderColor,
 
                                     width: 2,
                                   ),
@@ -345,7 +355,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                                         color: selectedType == "Pemasukan"
                                             ? Colors.green[800]
-                                            : Colors.black,
+                                            : bodyTextColor,
                                       ),
                                     ),
                                   ],
@@ -374,14 +384,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 decoration: BoxDecoration(
                                   color: selectedType == "Pengeluaran"
                                       ? const Color(0xFFFEE2E2)
-                                      : Colors.white,
+                                      : cardColor,
 
                                   borderRadius: BorderRadius.circular(24),
 
                                   border: Border.all(
                                     color: selectedType == "Pengeluaran"
                                         ? Colors.red
-                                        : Colors.grey.shade300,
+                                        : borderColor,
 
                                     width: 2,
                                   ),
@@ -415,7 +425,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                                         color: selectedType == "Pengeluaran"
                                             ? Colors.red[800]
-                                            : Colors.black,
+                                            : bodyTextColor,
                                       ),
                                     ),
                                   ],

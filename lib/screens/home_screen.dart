@@ -138,551 +138,633 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final subTextColor = widget.isDarkMode ? Colors.white70 : Colors.grey;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "CashNote",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF4F46E5),
-          ),
-        ),
-
-        backgroundColor: Colors.transparent,
-        foregroundColor: textColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-
-        actions: [
-          IconButton(
-            onPressed: widget.toggleTheme,
-
-            icon: Icon(widget.isDarkMode ? Icons.light_mode : Icons.dark_mode),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: bgColor,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // WELCOME CARD
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black12, blurRadius: 10),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Hai, Selamat Datang 👋",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                            ),
-                          ),
-
-                          const SizedBox(height: 4),
-
-                          Text(
-                            "Kelola keuanganmu dengan bijak",
-                            style: TextStyle(color: subTextColor, fontSize: 12),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    const Icon(
-                      Icons.account_balance_wallet,
-                      color: Colors.indigo,
-                      size: 38,
-                    ),
-                  ],
+      appBar: currentIndex == 0
+          ? AppBar(
+              title: Text(
+                "CashNote",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: widget.isDarkMode ? Colors.white : Color(0xFF4338CA),
                 ),
               ),
-
-              const SizedBox(height: 14),
-
-              // CARD SALDO
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF4338CA), Color(0xFF6366F1)],
+              backgroundColor: Colors.transparent,
+              foregroundColor: textColor,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              actions: [
+                IconButton(
+                  onPressed: widget.toggleTheme,
+                  icon: Icon(
+                    widget.isDarkMode ? Icons.light_mode : Icons.dark_mode,
                   ),
-
-                  borderRadius: BorderRadius.circular(22),
-
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.indigo.withOpacity(0.18),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              ],
+            )
+          : null,
+      body: IndexedStack(
+        index: currentIndex,
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              color: bgColor,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // WELCOME CARD
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: cardColor,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black12, blurRadius: 10),
+                      ],
+                    ),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Saldo Saat Ini",
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Hai, Selamat Datang 👋",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
+                                ),
+                              ),
+
+                              const SizedBox(height: 4),
+
+                              Text(
+                                "Kelola keuanganmu dengan bijak",
+                                style: TextStyle(
+                                  color: subTextColor,
+                                  fontSize: 12,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
 
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isBalanceVisible = !isBalanceVisible;
-                            });
-                          },
+                        const SizedBox(width: 12),
 
-                          child: Icon(
-                            isBalanceVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-
-                            color: Colors.white,
-                          ),
+                        Icon(
+                          Icons.account_balance_wallet,
+                          color: widget.isDarkMode
+                              ? Colors.indigo[200]
+                              : Colors.indigo,
+                          size: 38,
                         ),
                       ],
                     ),
+                  ),
 
-                    const SizedBox(height: 6),
+                  const SizedBox(height: 14),
 
-                    Text(
-                      isBalanceVisible ? "Rp ${getTotalSaldo()}" : "Rp •••••••",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  // CARD SALDO
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 14,
                     ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF4338CA), Color(0xFF6366F1)],
+                      ),
 
-                    const SizedBox(height: 8),
+                      borderRadius: BorderRadius.circular(22),
 
-                    Divider(color: Colors.white24),
-
-                    const SizedBox(height: 8),
-
-                    Row(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.indigo.withOpacity(0.18),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // PEMASUKAN
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Pemasukan",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-
-                                    const SizedBox(height: 4),
-
-                                    Text(
-                                      isBalanceVisible
-                                          ? "Rp ${getTotalPemasukan()}"
-                                          : "Rp •••••",
-                                      style: TextStyle(
-                                        color: Colors.greenAccent,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Saldo Saat Ini",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
                               ),
-                            ],
+                            ),
+
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isBalanceVisible = !isBalanceVisible;
+                                });
+                              },
+
+                              child: Icon(
+                                isBalanceVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 6),
+
+                        Text(
+                          isBalanceVisible
+                              ? "Rp ${getTotalSaldo()}"
+                              : "Rp •••••••",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
 
-                        Container(height: 60, width: 1, color: Colors.white24),
+                        const SizedBox(height: 8),
 
-                        const SizedBox(width: 14),
+                        Divider(color: Colors.white24),
 
-                        // PENGELUARAN
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Pengeluaran",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                        const SizedBox(height: 8),
+
+                        Row(
+                          children: [
+                            // PEMASUKAN
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Pemasukan",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+
+                                        const SizedBox(height: 4),
+
+                                        Text(
+                                          isBalanceVisible
+                                              ? "Rp ${getTotalPemasukan()}"
+                                              : "Rp •••••",
+                                          style: TextStyle(
+                                            color: Colors.greenAccent,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                     ),
-
-                                    const SizedBox(height: 4),
-
-                                    Text(
-                                      isBalanceVisible
-                                          ? "Rp ${getTotalPengeluaran()}"
-                                          : "Rp •••••",
-                                      style: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+
+                            Container(
+                              height: 60,
+                              width: 1,
+                              color: Colors.white24,
+                            ),
+
+                            const SizedBox(width: 14),
+
+                            // PENGELUARAN
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Pengeluaran",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+
+                                        const SizedBox(height: 4),
+
+                                        Text(
+                                          isBalanceVisible
+                                              ? "Rp ${getTotalPengeluaran()}"
+                                              : "Rp •••••",
+                                          style: TextStyle(
+                                            color: Colors.redAccent,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // RINGKASAN
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Ringkasan Bulan Ini",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
                   ),
 
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              StatisticScreen(transactions: transactions),
+                  const SizedBox(height: 24),
+
+                  // RINGKASAN
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Ringkasan Bulan Ini",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
                         ),
-                      );
-                    },
-
-                    child: const Text(
-                      "Lihat semua",
-                      style: TextStyle(color: Colors.indigo),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 16,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.green[50],
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            radius: 16,
-                            backgroundColor: Color(0xFFD1FAE5),
-                            child: Icon(
-                              Icons.arrow_downward,
-                              color: Colors.green,
+
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  StatisticScreen(transactions: transactions),
                             ),
-                          ),
+                          );
+                        },
 
-                          SizedBox(height: 8),
-
-                          Text("Pemasukan", style: TextStyle(fontSize: 14)),
-
-                          SizedBox(height: 4),
-
-                          Text(
-                            "Rp ${getTotalPemasukan()}",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 16),
-
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red[50],
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            radius: 16,
-                            backgroundColor: Color(0xFFFEE2E2),
-                            child: Icon(Icons.arrow_upward, color: Colors.red),
-                          ),
-
-                          SizedBox(height: 8),
-
-                          Text("Pengeluaran", style: TextStyle(fontSize: 14)),
-
-                          SizedBox(height: 4),
-
-                          Text(
-                            "Rp ${getTotalPengeluaran()}",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // TRANSAKSI TERBARU
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Transaksi Terbaru",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              AllTransactionScreen(transactions: transactions),
-                        ),
-                      );
-                    },
-
-                    child: const Text(
-                      "Lihat semua",
-                      style: TextStyle(color: Colors.indigo),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              transactions.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.only(top: 40),
-                      child: Center(
                         child: Text(
-                          "Belum ada transaksi",
-                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                          "Lihat semua",
+                          style: TextStyle(
+                            color: widget.isDarkMode
+                                ? Colors.indigo[200]
+                                : Colors.indigo,
+                          ),
                         ),
                       ),
-                    )
-                  : ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: transactions.take(3).map((item) {
-                        return Dismissible(
-                          key: UniqueKey(),
+                    ],
+                  ),
 
-                          background: Container(
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(right: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(20),
+                  const SizedBox(height: 16),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: widget.isDarkMode
+                                ? const Color(0xFF12371A)
+                                : Colors.green[50],
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: widget.isDarkMode
+                                    ? Colors.green[900]
+                                    : const Color(0xFFD1FAE5),
+                                child: Icon(
+                                  Icons.arrow_downward,
+                                  color: widget.isDarkMode
+                                      ? Colors.green[200]
+                                      : Colors.green,
+                                ),
+                              ),
+
+                              SizedBox(height: 8),
+
+                              Text(
+                                "Pemasukan",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: widget.isDarkMode
+                                      ? Colors.white70
+                                      : Colors.black87,
+                                ),
+                              ),
+
+                              const SizedBox(height: 4),
+
+                              Text(
+                                "Rp ${getTotalPemasukan()}",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 16),
+
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: widget.isDarkMode
+                                ? const Color(0xFF2A0F10)
+                                : Colors.red[50],
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: widget.isDarkMode
+                                    ? Colors.red[900]
+                                    : const Color(0xFFFEE2E2),
+                                child: Icon(
+                                  Icons.arrow_upward,
+                                  color: widget.isDarkMode
+                                      ? Colors.red[200]
+                                      : Colors.red,
+                                ),
+                              ),
+
+                              SizedBox(height: 8),
+
+                              Text(
+                                "Pengeluaran",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: widget.isDarkMode
+                                      ? Colors.white70
+                                      : Colors.black87,
+                                ),
+                              ),
+
+                              const SizedBox(height: 4),
+
+                              Text(
+                                "Rp ${getTotalPengeluaran()}",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: widget.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // TRANSAKSI TERBARU
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Transaksi Terbaru",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AllTransactionScreen(
+                                transactions: transactions,
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
+                          );
+                        },
+
+                        child: const Text(
+                          "Lihat semua",
+                          style: TextStyle(color: Colors.indigo),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  transactions.isEmpty
+                      ? const Padding(
+                          padding: EdgeInsets.only(top: 40),
+                          child: Center(
+                            child: Text(
+                              "Belum ada transaksi",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
+                        )
+                      : ListView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: transactions.take(3).map((item) {
+                            return Dismissible(
+                              key: UniqueKey(),
 
-                          onDismissed: (direction) async {
-                            await DatabaseService.deleteTransaction(item.id!);
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(right: 20),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                              ),
 
-                            fetchTransactions();
+                              onDismissed: (direction) async {
+                                await DatabaseService.deleteTransaction(
+                                  item.id!,
+                                );
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "${item.category} berhasil dihapus",
+                                fetchTransactions();
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "${item.category} berhasil dihapus",
+                                    ),
+                                  ),
+                                );
+                              },
+
+                              child: Card(
+                                color: cardColor,
+                                elevation: 0,
+                                margin: const EdgeInsets.only(bottom: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+
+                                  leading: CircleAvatar(
+                                    radius: 18,
+                                    backgroundColor: item.type == "Pemasukan"
+                                        ? Colors.green[50]
+                                        : Colors.red[50],
+
+                                    child: Icon(
+                                      item.type == "Pemasukan"
+                                          ? Icons.arrow_downward
+                                          : Icons.arrow_upward,
+
+                                      color: item.type == "Pemasukan"
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                  ),
+
+                                  title: Text(
+                                    item.category,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+
+                                  subtitle: Text(
+                                    item.type,
+                                    style: TextStyle(color: subTextColor),
+                                  ),
+
+                                  trailing: Text(
+                                    item.type == "Pemasukan"
+                                        ? "+ Rp ${item.amount}"
+                                        : "- Rp ${item.amount}",
+
+                                    style: TextStyle(
+                                      color: item.type == "Pemasukan"
+                                          ? Colors.green
+                                          : Colors.red,
+
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                  if (transactions.length > 4)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AllTransactionScreen(
+                                  transactions: transactions,
                                 ),
                               ),
                             );
                           },
 
-                          child: Card(
-                            color: cardColor,
-                            elevation: 0,
-                            margin: const EdgeInsets.only(bottom: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-
-                              leading: CircleAvatar(
-                                radius: 18,
-                                backgroundColor: item.type == "Pemasukan"
-                                    ? Colors.green[50]
-                                    : Colors.red[50],
-
-                                child: Icon(
-                                  item.type == "Pemasukan"
-                                      ? Icons.arrow_downward
-                                      : Icons.arrow_upward,
-
-                                  color: item.type == "Pemasukan"
-                                      ? Colors.green
-                                      : Colors.red,
-                                ),
-                              ),
-
-                              title: Text(
-                                item.category,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-
-                              subtitle: Text(
-                                item.type,
-                                style: TextStyle(color: subTextColor),
-                              ),
-
-                              trailing: Text(
-                                item.type == "Pemasukan"
-                                    ? "+ Rp ${item.amount}"
-                                    : "- Rp ${item.amount}",
-
-                                style: TextStyle(
-                                  color: item.type == "Pemasukan"
-                                      ? Colors.green
-                                      : Colors.red,
-
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
+                          child: const Text(
+                            "Transaksi lainnya>>>",
+                            style: TextStyle(
+                              color: Colors.indigo,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-              if (transactions.length > 4)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AllTransactionScreen(
-                              transactions: transactions,
-                            ),
-                          ),
-                        );
-                      },
-
-                      child: const Text(
-                        "Transaksi lainnya>>>",
-                        style: TextStyle(
-                          color: Colors.indigo,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                  ),
-                ),
-              const SizedBox(height: 22),
-            ],
+                  const SizedBox(height: 22),
+                ],
+              ),
+            ),
           ),
-        ),
+          AllTransactionScreen(transactions: transactions),
+          StatisticScreen(transactions: transactions),
+          ProfileScreen(
+            isDarkMode: widget.isDarkMode,
+            toggleTheme: widget.toggleTheme,
+            currentName: userName,
+            currentEmail: userEmail,
+          ),
+        ],
       ),
 
       bottomNavigationBar: BottomAppBar(
@@ -692,7 +774,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 8,
 
         child: SizedBox(
-          height: 60,
+          height: 52,
 
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -723,8 +805,8 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
       floatingActionButton: SizedBox(
-        width: 52,
-        height: 52,
+        width: 48,
+        height: 48,
         child: FloatingActionButton(
           onPressed: () async {
             final result = await Navigator.push(
@@ -775,46 +857,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return GestureDetector(
       onTap: () {
-        if (index == 1) {
-          Navigator.push(
-            context,
-
-            MaterialPageRoute(
-              builder: (context) =>
-                  AllTransactionScreen(transactions: transactions),
-            ),
-          );
-        }
-
-        if (index == 2) {
-          Navigator.push(
-            context,
-
-            MaterialPageRoute(
-              builder: (context) => StatisticScreen(transactions: transactions),
-            ),
-          );
-        }
-
-        if (index == 3) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfileScreen(
-                isDarkMode: widget.isDarkMode,
-                toggleTheme: widget.toggleTheme,
-                currentName: userName,
-                currentEmail: userEmail,
-              ),
-            ),
-          ).then((_) {
-            fetchUser();
-          });
-        }
-
         setState(() {
           currentIndex = index;
         });
+        if (index == 3) {
+          fetchUser();
+        }
       },
 
       child: Padding(

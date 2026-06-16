@@ -34,6 +34,9 @@ class AllTransactionScreen extends StatefulWidget {
       case "Hadiah":
         return Icons.card_giftcard;
 
+      case "Lainnya":
+        return Icons.category;
+
       default:
         return Icons.category;
     }
@@ -62,14 +65,6 @@ class AllTransactionScreen extends StatefulWidget {
 }
 
 class _AllTransactionScreenState extends State<AllTransactionScreen> {
-  late List<TransactionModel> _transactions;
-
-  @override
-  void initState() {
-    super.initState();
-    _transactions = List<TransactionModel>.from(widget.transactions);
-  }
-
   IconData getCategoryIcon(String category) {
     switch (category) {
       case "Makanan":
@@ -93,6 +88,9 @@ class _AllTransactionScreenState extends State<AllTransactionScreen> {
       case "Hadiah":
         return Icons.card_giftcard;
 
+      case "Lainnya":
+        return Icons.category;
+
       default:
         return Icons.category;
     }
@@ -100,7 +98,7 @@ class _AllTransactionScreenState extends State<AllTransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sortedTransactions = [..._transactions];
+    final sortedTransactions = [...widget.transactions];
 
     sortedTransactions.sort((a, b) {
       final aDate = widget.parseDate(a.date);
@@ -119,7 +117,7 @@ class _AllTransactionScreenState extends State<AllTransactionScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: _transactions.isEmpty
+      body: widget.transactions.isEmpty
           ? const Center(child: Text("Belum ada transaksi"))
           : Builder(
               builder: (context) {
@@ -165,11 +163,7 @@ class _AllTransactionScreenState extends State<AllTransactionScreen> {
                                   item.id!,
                                 );
                               }
-                              setState(() {
-                                _transactions.removeWhere(
-                                  (transaction) => transaction.id == item.id,
-                                );
-                              });
+                              setState(() {});
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
